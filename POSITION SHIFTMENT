@@ -1,0 +1,81 @@
+#include <SFML/Graphics.hpp>
+#include <iostream> // for std::cout
+
+int main() {
+    // Create the window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Square");
+
+    // Create a rectangle shape for the square
+    sf::RectangleShape square(sf::Vector2f(100.f, 100.f)); // Width and height of the square
+
+    // Set the initial position of the square
+    sf::Vector2f squarePosition(350.f, 250.f);
+    square.setPosition(squarePosition);
+
+    // Set the color of the square
+    square.setFillColor(sf::Color::Green); // Change color as needed
+
+    // Set the movement speed
+    float movementSpeed = 5.0f;
+
+    // Create a border
+    sf::RectangleShape border(sf::Vector2f(800.f, 600.f)); // Size of the window
+    border.setPosition(0.f, 0.f); // Position at top-left corner
+    border.setFillColor(sf::Color::Transparent);
+    border.setOutlineThickness(5.f);
+    border.setOutlineColor(sf::Color::Red);
+
+    // Main loop
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // Handle keyboard input
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            squarePosition.x -= movementSpeed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            squarePosition.x += movementSpeed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            squarePosition.y -= movementSpeed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            squarePosition.y += movementSpeed;
+
+        // Collision detection with border
+        if (squarePosition.x < 0)
+            squarePosition.x = 0;
+        else if (squarePosition.x > window.getSize().x - square.getSize().x)
+            squarePosition.x = window.getSize().x - square.getSize().x;
+        
+        if (squarePosition.y < 0)
+            squarePosition.y = 0;
+        else if (squarePosition.y > window.getSize().y - square.getSize().y)
+            squarePosition.y = window.getSize().y - square.getSize().y;
+
+        // Check if square position is (700, 500), then move it to (0, 0)
+        if (squarePosition.x == 700 && squarePosition.y == 500)
+            squarePosition = sf::Vector2f(0.f, 0.f);
+
+        // Update the position of the square
+        square.setPosition(squarePosition);
+
+        // Clear the window
+        window.clear();
+
+        // Draw the border
+        window.draw(border);
+
+        // Draw the square
+        window.draw(square);
+
+        // Display everything
+        window.display();
+
+        // Print position to the terminal
+        std::cout << "Square position: (" << squarePosition.x << ", " << squarePosition.y << ")" << std::endl;
+    }
+
+    return 0;
+}
